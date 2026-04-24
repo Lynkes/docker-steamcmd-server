@@ -1,0 +1,25 @@
+ARG BASE_IMAGE=ghcr.io/lynkes/steamcmd_docker:latest
+FROM ${BASE_IMAGE}
+
+# Add WineHQ stable repository (Debian Bookworm) and install Wine + Xvfb.
+# Game-profile hooks check `dpkg -s winehq-stable` and skip re-installation,
+# so Wine games start immediately without downloading ~400 MB on every cold start.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+        curl \
+        gnupg \
+ && curl -fsSL https://dl.winehq.org/wine-builds/winehq.key \
+        | gpg --dearmor -o /usr/share/keyrings/winehq.gpg \
+ && echo "deb [arch=amd64,i386 signed-by=/usr/share/keyrings/winehq.gpg] \
+https://dl.winehq.org/wine-builds/debian/ bookworm main" \
+        > /etc/apt/sources.list.d/winehq.list \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
+        winehq-stable \
+        winbind \
+        xvfb \
+        xauth \
+        lib32stdc++6 \
+        lib32z1 \
+        unzip \
+ && rm -rf /var/lib/apt/lists/*
