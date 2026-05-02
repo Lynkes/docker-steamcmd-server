@@ -13,12 +13,12 @@ RUN dpkg --add-architecture i386 && \
 		screen && \
 	curl -L "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-x64_bin.tar.gz" \
 		-o /tmp/graalvm.tar.gz && \
-	mkdir -p /serverdata/jre && \
-	tar -xzf /tmp/graalvm.tar.gz -C /serverdata/jre --strip-components=1 && \
+	mkdir -p /opt/graalvm && \
+	tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1 && \
 	rm /tmp/graalvm.tar.gz && \
 	rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME="/serverdata/jre"
+ENV JAVA_HOME="/opt/graalvm"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 ENV DATA_DIR="/serverdata"
