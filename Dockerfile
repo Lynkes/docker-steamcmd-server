@@ -12,8 +12,7 @@ RUN dpkg --add-architecture i386 && \
 	apt-get -y install --no-install-recommends \
 		lib32gcc-s1 \
 		screen \
-		zulu25-jdk \
-		openjdk-17-jre-headless:i386 && \
+		zulu25-jdk && \
 	rm -rf /var/lib/apt/lists/*
 
 ENV DATA_DIR="/serverdata"
