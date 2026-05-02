@@ -53,6 +53,15 @@ fi
 echo "---Prepare Server---"
 echo "---Setting up Environment---"
 export LD_LIBRARY_PATH="${SERVER_DIR}/linux64:${SERVER_DIR}/natives:${SERVER_DIR}:${LD_LIBRARY_PATH}"
+echo "---Redirecting game JRE to GraalVM---"
+ZULU_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+if [ -d "${SERVER_DIR}/jre64" ] && [ ! -L "${SERVER_DIR}/jre64" ]; then
+	mv "${SERVER_DIR}/jre64" "${SERVER_DIR}/jre64.bak"
+fi
+if [ ! -L "${SERVER_DIR}/jre64" ]; then
+	ln -s "${ZULU_HOME}" "${SERVER_DIR}/jre64"
+fi
+echo "---Using Java: $(java -version 2>&1 | head -1)---"
 echo "---Copying JVM launcher configuration---"
 cp /opt/scripts/ProjectZomboid64.json ${SERVER_DIR}/ProjectZomboid64.json
 cp /opt/scripts/ProjectZomboid32.json ${SERVER_DIR}/ProjectZomboid32.json

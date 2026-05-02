@@ -3,17 +3,23 @@ FROM ich777/debian-baseimage
 LABEL org.opencontainers.image.authors="admin@minenet.at"
 LABEL org.opencontainers.image.source="https://github.com/ich777/docker-steamcmd-server"
 
+ARG GRAALVM_VERSION="21.0.2"
+
 RUN dpkg --add-architecture i386 && \
 	apt-get update && \
-	apt-get -y install --no-install-recommends gnupg curl && \
-	curl -s https://repos.azul.com/azul-repo.key | gpg --dearmor -o /usr/share/keyrings/azul.gpg && \
-	echo "deb [signed-by=/usr/share/keyrings/azul.gpg] https://repos.azul.com/zulu/deb stable main" > /etc/apt/sources.list.d/zulu.list && \
-	apt-get update && \
 	apt-get -y install --no-install-recommends \
+		curl \
 		lib32gcc-s1 \
-		screen \
-		zulu25-jdk && \
+		screen && \
+	curl -L "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-x64_bin.tar.gz" \
+		-o /tmp/graalvm.tar.gz && \
+	mkdir -p /serverdata/jre && \
+	tar -xzf /tmp/graalvm.tar.gz -C /serverdata/jre --strip-components=1 && \
+	rm /tmp/graalvm.tar.gz && \
 	rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME="/serverdata/jre"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 ENV DATA_DIR="/serverdata"
 ENV STEAMCMD_DIR="${DATA_DIR}/steamcmd"
@@ -32,8 +38,8 @@ ENV PASSWRD=""
 ENV USER="steam"
 ENV DATA_PERM=770
 
-RUN mkdir $DATA_DIR && \
-	mkdir $STEAMCMD_DIR && \
+RUN mkdir -p $DATA_DIR && \
+	mkdir -p $STEAMCMD_DIR && \
 	mkdir $SERVER_DIR && \
 	useradd -d $SERVER_DIR -s /bin/bash $USER && \
 	chown -R $USER $DATA_DIR && \
