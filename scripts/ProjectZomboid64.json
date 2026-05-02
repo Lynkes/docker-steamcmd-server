@@ -1,0 +1,27 @@
+{
+	"mainClass": "zombie/network/GameServer",
+	"classpath": [
+		"java/.",
+		"java/projectzomboid.jar"
+	],
+	"vmArgs": [
+		"-Djava.awt.headless=true",
+		"-Xms4g",
+		"-Xmx24g",
+		"-Dzomboid.steam=1",
+		"-Dzomboid.znetlog=1",
+		"-Djava.library.path=linux64/:natives/",
+		"-Djava.security.egd=file:/dev/urandom",
+		"-XX:+UseZGC",
+		"-XX:+ZGenerational",
+		"-XX:+AlwaysPreTouch",
+		"-XX:+DisableExplicitGC",
+		"-XX:+UseStringDeduplication",
+		"-XX:ReservedCodeCacheSize=512m",
+		"-XX:-OmitStackTraceInFastThrow",
+		"-XX:+UnlockExperimentalVMOptions",
+		"-XX:+EnableJVMCI",
+		"-XX:+UseJVMCICompiler",
+		"-Djdk.graal.CompilerConfiguration=community"
+	]
+}

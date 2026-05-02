@@ -1,0 +1,92 @@
+# Project Zomboid Dedicated Server in Docker
+
+Runs a Project Zomboid dedicated server via SteamCMD. On first start the bundled server configuration template (`config/cfg/Zomboid/`) is automatically copied into the server data directory.
+
+**Update:** Restart the container to update to the latest game version. Set `VALIDATE=true` to force a full file validation.
+
+## Java Runtime
+
+The image ships **Azul Zulu JDK 25** (64-bit) for the main server process, with GraalVM JIT enabled via the bundled `jdk.graal.compiler` module. The 32-bit fallback launcher uses **OpenJDK 17 i386** with G1GC. The game's own bundled JRE is intentionally ignored.
+
+JVM tuning is controlled by the JSON files next to the launchers:
+
+| File | Launcher | GC | JIT |
+| --- | --- | --- | --- |
+| `ProjectZomboid64.json` | `ProjectZomboid64` | ZGC (Generational) | GraalVM community |
+| `ProjectZomboid32.json` | `ProjectZomboid32` | G1GC | default |
+
+## Server Configuration
+
+The default configuration template lives in `config/cfg/Zomboid/` and is copied into the container at `/opt/config/cfg/Zomboid/`. On first startup, if `${SERVER_DIR}/Zomboid` does not exist, it is seeded from this template. Subsequent starts skip the copy and use the existing (potentially modified) data.
+
+Configuration files included:
+
+- `Server/servertest.ini` — main server settings
+- `Server/servertest_SandboxVars.lua` — sandbox tuning
+- `Server/servertest_spawnpoints.lua` — spawn points
+- `Server/servertest_spawnregions.lua` — spawn regions
+- `options.ini` — global options
+
+## Environment Variables
+
+| Name | Description | Default |
+| --- | --- | --- |
+| `STEAMCMD_DIR` | SteamCMD installation directory | `/serverdata/steamcmd` |
+| `SERVER_DIR` | Game files directory | `/serverdata/serverfiles` |
+| `GAME_ID` | Steam App ID (use `380870 -beta BRANCH` for a specific branch) | `380870` |
+| `ADMIN_PWD` | In-game admin password | `adminDocker` |
+| `GAME_PARAMS` | Extra arguments passed to the server launcher | _(empty)_ |
+| `VALIDATE` | Set to `true` to validate game files on every start | _(empty)_ |
+| `USERNAME` | Steam username (leave blank for anonymous login) | _(empty)_ |
+| `PASSWRD` | Steam password (leave blank for anonymous login) | _(empty)_ |
+| `UID` | User ID the server process runs as | `99` |
+| `GID` | Group ID the server process runs as | `100` |
+| `UMASK` | File creation mask | `000` |
+| `DATA_PERM` | Permissions applied to the data directory | `770` |
+
+## Run Example
+
+```bash
+docker run --name ProjectZomboid -d \
+    -p 16261-16262:16261-16262/udp \
+    -p 27015:27015/tcp \
+    --env 'GAME_ID=380870' \
+    --env 'ADMIN_PWD=changeme' \
+    --env 'UID=99' \
+    --env 'GID=100' \
+    --volume /path/to/steamcmd:/serverdata/steamcmd \
+    --volume /path/to/projectzomboid:/serverdata/serverfiles \
+    ich777/steamcmd:projectzomboid
+```
+
+## Volumes
+
+| Container path | Purpose |
+| --- | --- |
+| `/serverdata/steamcmd` | SteamCMD cache — persist to avoid re-downloading |
+| `/serverdata/serverfiles` | Game files + world saves + server config |
+
+## Ports
+
+| Port | Protocol | Purpose |
+| --- | --- | --- |
+| `16261` | UDP | Game traffic (primary) |
+| `16262` | UDP | Game traffic (secondary) |
+| `27015` | TCP | Steam query / RCON |
+
+## Startup Sequence
+
+1. Install / update SteamCMD if not present
+2. Update (or validate) game files via SteamCMD
+3. Set up `LD_LIBRARY_PATH` for native libraries
+4. Seed `${SERVER_DIR}/Zomboid` from `/opt/config/cfg/Zomboid/` if missing
+5. Clean up old log file (`masterLog.0`)
+6. Launch `ProjectZomboid64` inside a `screen` session
+7. Launch watchdog — terminates the container when the server process exits
+8. Tail `masterLog.0` to stdout
+
+---
+
+Forked from [mattieserver](https://github.com/mattieserver). Originally adapted for Unraid by [ich777](https://github.com/ich777/docker-steamcmd-server).
+
+Support thread: https://forums.unraid.net/topic/79530-support-ich777-gameserver-dockers/
