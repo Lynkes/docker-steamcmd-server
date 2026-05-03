@@ -6,7 +6,7 @@
 	],
 	"vmArgs": [
 		"-Djava.awt.headless=true",
-		"-Xms4g",
+		"-Xms8g",
 		"-Xmx24g",
 		"-Dzomboid.steam=1",
 		"-Dzomboid.znetlog=1",
@@ -18,6 +18,7 @@
 		"-XX:G1NewSizePercent=20",
 		"-XX:G1MaxNewSizePercent=40",
 		"-XX:+ParallelRefProcEnabled",
+		"-XX:G1RSetUpdatingPauseTimePercent=5",
 		"-XX:+PerfDisableSharedMem",
 		"-XX:+AlwaysPreTouch",
 		"-XX:+DisableExplicitGC",
