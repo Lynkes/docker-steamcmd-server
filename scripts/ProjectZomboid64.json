@@ -29,7 +29,6 @@
 		"-XX:+EnableJVMCI",
 		"-XX:+UseJVMCICompiler",
 		"-Djdk.graal.CompilerConfiguration=community",
-		"-Djdk.graal.OptimizeExceptionPaths=true",
 		"--enable-native-access=ALL-UNNAMED"
 	]
 }
