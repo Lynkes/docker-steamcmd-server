@@ -21,6 +21,7 @@
 		"-XX:+UnlockExperimentalVMOptions",
 		"-XX:+EnableJVMCI",
 		"-XX:+UseJVMCICompiler",
-		"-Djdk.graal.CompilerConfiguration=community"
+		"-Djdk.graal.CompilerConfiguration=community",
+		"--enable-native-access=ALL-UNNAMED"
 	]
 }
