@@ -1,4 +1,5 @@
 FROM ghcr.io/graalvm/graalvm-community:25.0.2 AS graalvm
+RUN cp -r $JAVA_HOME /graalvm-export
 
 FROM ich777/debian-baseimage
 
@@ -14,7 +15,7 @@ RUN dpkg --add-architecture i386 && \
 		screen && \
 	rm -rf /var/lib/apt/lists/*
 
-COPY --from=graalvm /usr/lib/jvm/graalvm-community-java25 /opt/graalvm
+COPY --from=graalvm /graalvm-export /opt/graalvm
 
 ENV JAVA_HOME="/opt/graalvm"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
