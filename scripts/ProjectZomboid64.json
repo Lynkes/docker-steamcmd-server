@@ -13,6 +13,12 @@
 		"-Djava.library.path=linux64/:natives/",
 		"-Djava.security.egd=file:/dev/urandom",
 		"-XX:+UseG1GC",
+		"-XX:MaxGCPauseMillis=50",
+		"-XX:G1HeapRegionSize=16m",
+		"-XX:G1NewSizePercent=20",
+		"-XX:G1MaxNewSizePercent=40",
+		"-XX:+ParallelRefProcEnabled",
+		"-XX:+PerfDisableSharedMem",
 		"-XX:+AlwaysPreTouch",
 		"-XX:+DisableExplicitGC",
 		"-XX:+UseStringDeduplication",
@@ -22,6 +28,7 @@
 		"-XX:+EnableJVMCI",
 		"-XX:+UseJVMCICompiler",
 		"-Djdk.graal.CompilerConfiguration=community",
+		"-Djdk.graal.OptimizeExceptionPaths=true",
 		"--enable-native-access=ALL-UNNAMED"
 	]
 }
