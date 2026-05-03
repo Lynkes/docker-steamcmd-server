@@ -1,22 +1,20 @@
+FROM ghcr.io/graalvm/graalvm-community:25.0.2 AS graalvm
+
 FROM ich777/debian-baseimage
 
 LABEL org.opencontainers.image.authors="admin@minenet.at"
 LABEL org.opencontainers.image.source="https://github.com/ich777/docker-steamcmd-server"
 
-ARG GRAALVM_VERSION="21.0.2"
+ARG GRAALVM_VERSION="25.0.2"
 
 RUN dpkg --add-architecture i386 && \
 	apt-get update && \
 	apt-get -y install --no-install-recommends \
-		curl \
 		lib32gcc-s1 \
 		screen && \
-	curl -L "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-x64_bin.tar.gz" \
-		-o /tmp/graalvm.tar.gz && \
-	mkdir -p /opt/graalvm && \
-	tar -xzf /tmp/graalvm.tar.gz -C /opt/graalvm --strip-components=1 && \
-	rm /tmp/graalvm.tar.gz && \
 	rm -rf /var/lib/apt/lists/*
+
+COPY --from=graalvm /usr/lib/jvm/graalvm-community-java25 /opt/graalvm
 
 ENV JAVA_HOME="/opt/graalvm"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
