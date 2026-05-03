@@ -6,13 +6,13 @@ Runs a Project Zomboid dedicated server via SteamCMD. On first start the bundled
 
 ## Java Runtime
 
-The image ships **Azul Zulu JDK 25** (64-bit) for the main server process, with GraalVM JIT enabled via the bundled `jdk.graal.compiler` module. The 32-bit fallback launcher uses **OpenJDK 17 i386** with G1GC. The game's own bundled JRE is intentionally ignored.
+The image ships **GraalVM Community Edition 25.0.2** (64-bit), installed at `/opt/graalvm` via a multi-stage Docker build. The Graal JIT compiler is enabled through JVMCI flags. The game's own bundled JRE is replaced at runtime with a symlink to `/opt/graalvm`.
 
 JVM tuning is controlled by the JSON files next to the launchers:
 
 | File | Launcher | GC | JIT |
 | --- | --- | --- | --- |
-| `ProjectZomboid64.json` | `ProjectZomboid64` | ZGC (Generational) | GraalVM community |
+| `ProjectZomboid64.json` | `ProjectZomboid64` | G1GC | GraalVM community (JVMCI) |
 | `ProjectZomboid32.json` | `ProjectZomboid32` | G1GC | default |
 
 ## Server Configuration
@@ -79,11 +79,12 @@ docker run --name ProjectZomboid -d \
 1. Install / update SteamCMD if not present
 2. Update (or validate) game files via SteamCMD
 3. Set up `LD_LIBRARY_PATH` for native libraries
-4. Seed `${SERVER_DIR}/Zomboid` from `/opt/config/cfg/Zomboid/` if missing
-5. Clean up old log file (`masterLog.0`)
-6. Launch `ProjectZomboid64` inside a `screen` session
-7. Launch watchdog — terminates the container when the server process exits
-8. Tail `masterLog.0` to stdout
+4. Replace game's bundled `jre64/` with a symlink to `/opt/graalvm`
+5. Seed `${SERVER_DIR}/Zomboid` from `/opt/config/cfg/Zomboid/` if missing
+6. Clean up old log file (`masterLog.0`)
+7. Launch `ProjectZomboid64` inside a `screen` session
+8. Launch watchdog — terminates the container when the server process exits
+9. Tail `masterLog.0` to stdout
 
 ---
 
