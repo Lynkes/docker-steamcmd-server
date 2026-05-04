@@ -6,8 +6,8 @@
 	],
 	"vmArgs": [
 		"-Djava.awt.headless=true",
-		"-Xms512m",
-		"-Xmx24g",
+		"-Xms256m",
+		"-Xmx16g",
 		"-Dzomboid.steam=1",
 		"-Dzomboid.znetlog=1",
 		"-Djava.library.path=linux64/:natives/",
@@ -23,11 +23,14 @@
 		"-XX:+PerfDisableSharedMem",
 		"-XX:+DisableExplicitGC",
 		"-XX:+UseStringDeduplication",
-		"-XX:ReservedCodeCacheSize=512m",
+		"-XX:ReservedCodeCacheSize=1024m",
 		"-XX:-OmitStackTraceInFastThrow",
+		"-XX:InitiatingHeapOccupancyPercent=25",
+		"-XX:G1MixedGCLiveThresholdPercent=65",
 		"-XX:+EnableJVMCI",
 		"-XX:+UseJVMCICompiler",
 		"-Djdk.graal.CompilerConfiguration=community",
+		"-Djdk.graal.TuneInlinerExploration=1",
 		"--enable-native-access=ALL-UNNAMED"
 	]
 }
