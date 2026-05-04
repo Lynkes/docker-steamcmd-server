@@ -16,7 +16,7 @@ fi
 
 chown -R root:${PGID} /opt/scripts || echo "[ERROR] Failed to chown /opt/scripts"
 chmod -R 750 /opt/scripts
-chown -R ${PUID}:${PGID} ${DATA_DIR} || echo "[ERROR] Failed to chown ${DATA_DIR}"
+chown -R ${PUID}:${PGID} /serverdata || echo "[ERROR] Failed to chown /serverdata"
 
 term_handler() {
 	kill -SIGINT $(pidof ProjectZomboid64)

@@ -67,7 +67,7 @@ if [ ! -d ${SERVER_DIR}/Zomboid ]; then
 fi
 
 find ${SERVER_DIR} -name "masterLog.0" -exec rm -f {} \; > /dev/null 2>&1
-chmod -R ${DATA_PERM} ${DATA_DIR}
+chmod -R ${DATA_PERM} /serverdata
 
 cd ${SERVER_DIR}
 screen -S PZ -L -Logfile ${SERVER_DIR}/masterLog.0 -d -m ${SERVER_DIR}/ProjectZomboid64 -adminpassword ${ADMIN_PWD} ${GAME_PARAMS} \
