@@ -1,86 +1,78 @@
 #!/bin/bash
 if [ ! -f ${STEAMCMD_DIR}/steamcmd.sh ]; then
-    echo "SteamCMD not found!"
-    wget -q -O ${STEAMCMD_DIR}/steamcmd_linux.tar.gz http://media.steampowered.com/client/steamcmd_linux.tar.gz 
-    tar --directory ${STEAMCMD_DIR} -xvzf /serverdata/steamcmd/steamcmd_linux.tar.gz
-    rm ${STEAMCMD_DIR}/steamcmd_linux.tar.gz
+    echo "[ERROR] SteamCMD not found, downloading..."
+    wget -q -O /tmp/steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+        || { echo "[ERROR] Failed to download SteamCMD"; exit 1; }
+    tar -C "${STEAMCMD_DIR}" -xzf /tmp/steamcmd.tar.gz \
+        || { echo "[ERROR] Failed to extract SteamCMD"; exit 1; }
+    rm /tmp/steamcmd.tar.gz
 fi
 
-echo "---Update SteamCMD---"
 if [ "${USERNAME}" == "" ]; then
-    ${STEAMCMD_DIR}/steamcmd.sh \
-    +login anonymous \
-    +quit
+    ${STEAMCMD_DIR}/steamcmd.sh +login anonymous +quit > /dev/null 2>&1 \
+        || echo "[WARN] SteamCMD self-update failed"
 else
-    ${STEAMCMD_DIR}/steamcmd.sh \
-    +login ${USERNAME} ${PASSWRD} \
-    +quit
+    ${STEAMCMD_DIR}/steamcmd.sh +login ${USERNAME} ${PASSWRD} +quit > /dev/null 2>&1 \
+        || echo "[WARN] SteamCMD self-update failed"
 fi
 
-echo "---Update Server---"
 if [ "${USERNAME}" == "" ]; then
     if [ "${VALIDATE}" == "true" ]; then
-    	echo "---Validating installation---"
         ${STEAMCMD_DIR}/steamcmd.sh \
         +force_install_dir ${SERVER_DIR} \
         +login anonymous \
         +app_update ${GAME_ID} validate \
-        +quit
+        +quit || { echo "[ERROR] Server update/validate failed"; exit 1; }
     else
         ${STEAMCMD_DIR}/steamcmd.sh \
         +force_install_dir ${SERVER_DIR} \
         +login anonymous \
         +app_update ${GAME_ID} \
-        +quit
+        +quit || { echo "[ERROR] Server update failed"; exit 1; }
     fi
 else
     if [ "${VALIDATE}" == "true" ]; then
-    	echo "---Validating installation---"
         ${STEAMCMD_DIR}/steamcmd.sh \
         +force_install_dir ${SERVER_DIR} \
         +login ${USERNAME} ${PASSWRD} \
         +app_update ${GAME_ID} validate \
-        +quit
+        +quit || { echo "[ERROR] Server update/validate failed"; exit 1; }
     else
         ${STEAMCMD_DIR}/steamcmd.sh \
         +force_install_dir ${SERVER_DIR} \
         +login ${USERNAME} ${PASSWRD} \
         +app_update ${GAME_ID} \
-        +quit
+        +quit || { echo "[ERROR] Server update failed"; exit 1; }
     fi
 fi
 
-echo "---Prepare Server---"
-echo "---Setting up Environment---"
 export LD_LIBRARY_PATH="${SERVER_DIR}/linux64:${SERVER_DIR}/natives:${SERVER_DIR}:${LD_LIBRARY_PATH}"
-echo "---Redirecting game JRE to GraalVM---"
+
 if [ -d "${SERVER_DIR}/jre64" ] && [ ! -L "${SERVER_DIR}/jre64" ]; then
 	mv "${SERVER_DIR}/jre64" "${SERVER_DIR}/jre64.bak"
 fi
 if [ ! -L "${SERVER_DIR}/jre64" ]; then
-	ln -s "${JAVA_HOME}" "${SERVER_DIR}/jre64"
-fi
-echo "---Using Java: $(java -version 2>&1 | head -1)---"
-echo "---Copying JVM launcher configuration---"
-cp /opt/scripts/ProjectZomboid64.json ${SERVER_DIR}/ProjectZomboid64.json
-cp /opt/scripts/ProjectZomboid32.json ${SERVER_DIR}/ProjectZomboid32.json
-echo "---Looking for server configuration file---"
-if [ ! -d ${SERVER_DIR}/Zomboid ]; then
-	echo "---No server configuration found, copying template from config folder---"
-	cp -r /opt/config/cfg/Zomboid ${SERVER_DIR}/Zomboid
-	echo "---Successfully copied server configuration files---"
-else
-	echo "---Server configuration files found!---"
+	ln -s "${JAVA_HOME}" "${SERVER_DIR}/jre64" \
+		|| echo "[ERROR] Failed to symlink GraalVM JRE"
 fi
 
-echo "---Checking for old logs---"
+cp /opt/scripts/ProjectZomboid64.json ${SERVER_DIR}/ProjectZomboid64.json \
+    || { echo "[ERROR] Failed to copy ProjectZomboid64.json"; exit 1; }
+cp /opt/scripts/ProjectZomboid32.json ${SERVER_DIR}/ProjectZomboid32.json \
+    || { echo "[ERROR] Failed to copy ProjectZomboid32.json"; exit 1; }
+
+if [ ! -d ${SERVER_DIR}/Zomboid ]; then
+	cp -r /opt/config/cfg/Zomboid ${SERVER_DIR}/Zomboid \
+		|| { echo "[ERROR] Failed to copy server config template"; exit 1; }
+fi
+
 find ${SERVER_DIR} -name "masterLog.0" -exec rm -f {} \; > /dev/null 2>&1
 chmod -R ${DATA_PERM} ${DATA_DIR}
-echo "---Server ready---"
 
-echo "---Start Server---"
 cd ${SERVER_DIR}
-screen -S PZ -L -Logfile ${SERVER_DIR}/masterLog.0 -d -m ${SERVER_DIR}/ProjectZomboid64 -adminpassword ${ADMIN_PWD} ${GAME_PARAMS}
+screen -S PZ -L -Logfile ${SERVER_DIR}/masterLog.0 -d -m ${SERVER_DIR}/ProjectZomboid64 -adminpassword ${ADMIN_PWD} ${GAME_PARAMS} \
+    || { echo "[ERROR] Failed to start server"; exit 1; }
 sleep 2
 screen -S watchdog -d -m /opt/scripts/start-watchdog.sh
+tail -f ${SERVER_DIR}/masterLog.0
 tail -f ${SERVER_DIR}/masterLog.0

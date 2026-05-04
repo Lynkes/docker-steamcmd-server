@@ -1,30 +1,23 @@
 #!/bin/bash
-echo "---Ensuring UID: ${UID} matches user---"
-usermod -u ${UID} ${USER}
-echo "---Ensuring GID: ${GID} matches user---"
-groupmod -g ${GID} ${USER} > /dev/null 2>&1 ||:
-usermod -g ${GID} ${USER}
-echo "---Setting umask to ${UMASK}---"
+usermod -u ${PUID} ${USER} || echo "[ERROR] Failed to set PUID ${PUID}"
+groupmod -g ${PGID} ${USER} > /dev/null 2>&1 ||:
+usermod -g ${PGID} ${USER} || echo "[ERROR] Failed to set PGID ${PGID}"
 umask ${UMASK}
 
-echo "---Checking for optional scripts---"
-cp -f /opt/custom/user.sh /opt/scripts/start-user.sh > /dev/null 2>&1 ||:
-cp -f /opt/scripts/user.sh /opt/scripts/start-user.sh > /dev/null 2>&1 ||:
+_launch_script="/opt/scripts/start-server.sh"
 
-if [ -f /opt/scripts/start-user.sh ]; then
-    echo "---Found optional script, executing---"
-    chmod -f +x /opt/scripts/start-user.sh ||:
-    /opt/scripts/start-user.sh || echo "---Optional Script has thrown an Error---"
-else
-    echo "---No optional script found, continuing---"
+if [ -f "${SERVER_DIR}/start-user.sh" ]; then
+    if chmod +x "${SERVER_DIR}/start-user.sh"; then
+        _launch_script="${SERVER_DIR}/start-user.sh"
+    else
+        echo "[ERROR] Failed to chmod start-user.sh, falling back to start-server.sh"
+    fi
 fi
 
-echo "---Taking ownership of data...---"
-chown -R root:${GID} /opt/scripts
+chown -R root:${PGID} /opt/scripts || echo "[ERROR] Failed to chown /opt/scripts"
 chmod -R 750 /opt/scripts
-chown -R ${UID}:${GID} ${DATA_DIR}
+chown -R ${PUID}:${PGID} ${DATA_DIR} || echo "[ERROR] Failed to chown ${DATA_DIR}"
 
-echo "---Starting...---"
 term_handler() {
 	kill -SIGINT $(pidof ProjectZomboid64)
 	tail --pid=$(pidof ProjectZomboid64) -f 2>/dev/null
@@ -33,7 +26,7 @@ term_handler() {
 }
 
 trap 'kill ${!}; term_handler' SIGTERM
-su ${USER} -c "/opt/scripts/start-server.sh" &
+su ${USER} -c "${_launch_script}" &
 killpid="$!"
 while true
 do
