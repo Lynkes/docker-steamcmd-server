@@ -4,7 +4,7 @@ Runs a Project Zomboid dedicated server via SteamCMD. On first start the bundled
 
 **Update:** Restart the container to update to the latest game version. Set `VALIDATE=true` to force a full file validation.
 
-## Java Runtime
+## Java Runtime & JVM Optimization
 
 The image ships **GraalVM Community Edition 25.0.2** (64-bit), installed at `/opt/graalvm` via a multi-stage Docker build. The Graal JIT compiler is enabled through JVMCI flags. The game's own bundled JRE is replaced at runtime with a symlink to `/opt/graalvm`.
 
@@ -14,6 +14,36 @@ JVM tuning is controlled by the JSON files next to the launchers:
 | --- | --- | --- | --- |
 | `ProjectZomboid64.json` | `ProjectZomboid64` | G1GC | GraalVM community (JVMCI) |
 | `ProjectZomboid32.json` | `ProjectZomboid32` | G1GC | default |
+
+### Heap
+
+- **`-Xms256m`** — JVM starts with a minimal 256 MB heap and grows on demand rather than pre-allocating a large block at startup.
+- **`-Xmx16g`** — Hard cap at 16 GB; increase if your host has more RAM and a large number of players/mods.
+
+### G1GC Tuning
+
+| Flag | Value | Intent |
+| --- | --- | --- |
+| `MaxGCPauseMillis` | `50` | Target pause budget — keeps GC pauses short enough that players don't notice lag spikes |
+| `G1HeapRegionSize` | `16m` | Larger regions reduce region-management overhead for a heap in the 4–16 GB range |
+| `G1NewSizePercent` | `20` | Minimum young-gen size — reduces premature promotions to old gen |
+| `G1MaxNewSizePercent` | `40` | Caps young-gen growth so GC pauses stay within the target budget |
+| `InitiatingHeapOccupancyPercent` | `25` | Starts concurrent marking earlier (default 45%) to avoid the heap filling up and forcing a Stop-the-World Full GC |
+| `G1MixedGCLiveThresholdPercent` | `65` | Includes old-gen regions with up to 65% live data in mixed GCs — cleans old gen more aggressively and reduces Full GC risk |
+| `G1RSetUpdatingPauseTimePercent` | `5` | Limits pause time spent updating remembered sets |
+| `ParallelRefProcEnabled` | — | Processes reference objects in parallel during GC |
+| `PerfDisableSharedMem` | — | Disables JVM perf data shared memory — reduces file I/O in containers |
+| `DisableExplicitGC` | — | Prevents `System.gc()` calls from forcing a Full GC |
+| `UseStringDeduplication` | — | Deduplicates identical `String` objects in the heap — useful for a game that loads many repeated strings from map/mod data |
+
+### GraalVM JIT (JVMCI)
+
+| Flag | Intent |
+| --- | --- |
+| `EnableJVMCI` + `UseJVMCICompiler` | Replaces the default C2 JIT with the Graal compiler for higher peak throughput |
+| `CompilerConfiguration=community` | Uses the full community Graal tier (most aggressive optimizations) |
+| `TuneInlinerExploration=1` | Makes Graal more aggressive at inlining hot methods — improves steady-state throughput |
+| `ReservedCodeCacheSize=1024m` | Gives the JIT compiler 1 GB of code cache so hot paths are never evicted |
 
 ## Server Configuration
 
@@ -39,8 +69,8 @@ Configuration files included:
 | `VALIDATE` | Set to `true` to validate game files on every start | _(empty)_ |
 | `USERNAME` | Steam username (leave blank for anonymous login) | _(empty)_ |
 | `PASSWRD` | Steam password (leave blank for anonymous login) | _(empty)_ |
-| `UID` | User ID the server process runs as | `99` |
-| `GID` | Group ID the server process runs as | `100` |
+| `PUID` | User ID the server process runs as | `1000` |
+| `PGID` | Group ID the server process runs as | `1000` |
 | `UMASK` | File creation mask | `000` |
 | `DATA_PERM` | Permissions applied to the data directory | `770` |
 
@@ -52,8 +82,8 @@ docker run --name ProjectZomboid -d \
     -p 27015:27015/tcp \
     --env 'GAME_ID=380870' \
     --env 'ADMIN_PWD=changeme' \
-    --env 'UID=99' \
-    --env 'GID=100' \
+    --env 'PUID=1000' \
+    --env 'PGID=1000' \
     --volume /path/to/steamcmd:/serverdata/steamcmd \
     --volume /path/to/projectzomboid:/serverdata/serverfiles \
     ich777/steamcmd:projectzomboid
