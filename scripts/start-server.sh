@@ -52,6 +52,7 @@ else
 fi
 
 export LD_LIBRARY_PATH="${SERVER_DIR}/linux64:${SERVER_DIR}/natives:${SERVER_DIR}:${LD_LIBRARY_PATH}"
+export PATH="${SERVER_DIR}/jre64/bin:${PATH}"
 
 cp /opt/scripts/ProjectZomboid64.json ${SERVER_DIR}/ProjectZomboid64.json \
     || { echo "[ERROR] Failed to copy ProjectZomboid64.json"; exit 1; }
