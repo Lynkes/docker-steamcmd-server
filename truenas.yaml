@@ -3,12 +3,17 @@ services:
     environment:
       ADMIN_PWD: ChangeMe
       DATA_PERM: '770'
-      GAME_ID: 380870 -beta unstable #B42.17+ use  "380870 -beta unstable"
+      GAME_ID: 380870 -beta unstable #B42.17+ use  "380870 -beta unstable only 380870 for stable branch"
       PGID: '568'
       PUID: '568'
       VALIDATE: ''
     image: ghcr.io/lynkes/docker-steamcmd-server:projectzomboid
-    network_mode: host
+    ports:
+      - "16261:16261/udp"
+      - "16262:16262/udp"
+      - "8766:8766/udp" #Ports used before version 41.77
+      - "8767:8767/udp" #Ports used before version 41.77
+      - "27015:27015/tcp"
     pull_policy: always
     restart: always
     volumes:
