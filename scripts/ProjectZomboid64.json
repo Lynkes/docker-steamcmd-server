@@ -27,9 +27,6 @@
 		"-XX:-OmitStackTraceInFastThrow",
 		"-XX:InitiatingHeapOccupancyPercent=25",
 		"-XX:G1MixedGCLiveThresholdPercent=65",
-		"-XX:+EnableJVMCI",
-		"-XX:+UseJVMCICompiler",
-		"-Djdk.graal.CompilerConfiguration=community",
 		"--enable-native-access=ALL-UNNAMED"
 	]
 }

@@ -1,34 +1,21 @@
 services:
   projectzomboid:
     environment:
-      ADMIN_PWD: ChangeMe
-      DATA_PERM: '770'
-      GAME_ID: 380870 -beta unstable #B42.17+ use  "380870 -beta unstable only 380870 for stable branch"
+      ADMIN_PWD: Changeme
+      GAME_ID: 380870 -beta unstable
       PGID: '568'
       PUID: '568'
+      TZ: America/Sao_Paulo
       VALIDATE: ''
     image: ghcr.io/lynkes/docker-steamcmd-server:projectzomboid
     ports:
       - "16261:16261/udp"
       - "16262:16262/udp"
-      - "8766:8766/udp" #Ports used before version 41.77
-      - "8767:8767/udp" #Ports used before version 41.77
+      - "8766:8766/udp"
+      - "8767:8767/udp"
       - "27015:27015/tcp"
     pull_policy: always
     restart: always
     volumes:
-      - bind:
-          create_host_path: True
-          propagation: rprivate
-        read_only: False
-        source: /mnt/vdev/apps/projectzomboid
-        target: /serverdata/serverfiles
-        type: bind
-      - bind:
-          create_host_path: True
-          propagation: rprivate
-        read_only: False
-        source: /mnt/vdev/apps/steamcmd
-        target: /serverdata/steamcmd
-        type: bind
-volumes: {}
+      - /mnt/vdev/apps/projectzomboid:/serverdata/serverfiles
+      - /mnt/vdev/apps/steamcmd:/serverdata/steamcmd

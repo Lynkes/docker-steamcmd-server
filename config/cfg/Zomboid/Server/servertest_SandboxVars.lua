@@ -7,7 +7,7 @@ SandboxVars = {
     -- 4 = Normal
     -- 5 = Low
     -- 6 = None
-    Zombies = 4,
+    Zombies = 3,
     -- How zombies are distributed across the map. Default = Urban Focused
     -- 1 = Urban Focused
     -- 2 = Uniform
@@ -243,7 +243,7 @@ SandboxVars = {
     -- 3 = Normal
     -- 4 = Slow
     -- 5 = Very Slow
-    StatsDecrease = 3,
+    StatsDecrease = 4,
     -- The abundance of items found in Foraging mode. Default = Normal
     -- 1 = Very Poor
     -- 2 = Poor
@@ -258,7 +258,7 @@ SandboxVars = {
     -- 4 = Sometimes
     -- 5 = Often
     -- 6 = Very Often
-    Alarm = 4,
+    Alarm = 3,
     -- How frequently the doors of homes and buildings will be locked when discovered. Default = Very Often
     -- 1 = Never
     -- 2 = Extremely Rare
@@ -266,7 +266,7 @@ SandboxVars = {
     -- 4 = Sometimes
     -- 5 = Often
     -- 6 = Very Often
-    LockedHouses = 6,
+    LockedHouses = 3,
     -- Spawn with Chips, a Water Bottle, a Small Backpack, a Baseball Bat, and a Hammer.
     StarterKit = false,
     -- Nutritional value of food affects the player's condition. Turning this off will stop the player gaining or losing weight.
@@ -372,7 +372,7 @@ SandboxVars = {
     -- 6 = Very Often
     AnnotatedMapChance = 5,
     -- Adds free points during character creation. Min: -100 Max: 100 Default: 0
-    CharacterFreePoints = 10,
+    CharacterFreePoints = 14,
     -- Gives player-built constructions extra hit points so they are  more resistant to zombie damage. Default = Normal
     -- 1 = Very Low
     -- 2 = Low
@@ -745,7 +745,7 @@ SandboxVars = {
     -- 3 = All types of target
     FirearmUseDamageChance = 2,
     -- A multiplier for the distance at which zombies can hear gunshots. Min: 0.20 Max: 2.00 Default: 1.00
-    FirearmNoiseMultiplier = 1.0,
+    FirearmNoiseMultiplier = 2.0,
     -- Multiplier for firearm jamming chance. 0 disables jamming. Min: 0.00 Max: 10.00 Default: 1.00
     FirearmJamMultiplier = 0.6,
     -- Multiplier for Moodle effects on hit chance. 0 disables Moodle penalty. Min: 0.00 Max: 10.00 Default: 1.00
@@ -789,9 +789,9 @@ SandboxVars = {
         -- 2 = Fast Shamblers
         -- 3 = Shamblers
         -- 4 = Random
-        Speed = 2,
+        Speed = 4,
         -- If Random Speed is enabled, this controls what percentage of zombies are Sprinters. Check the "Advanced" box below to use a custom percentage. Min: 0 Max: 100 Default: 0
-        SprinterPercentage = 0,
+        SprinterPercentage = 0.003,
         -- The damage zombies inflict per attack. Default = Normal
         -- 1 = Superhuman
         -- 2 = Normal
@@ -826,7 +826,7 @@ SandboxVars = {
         -- 4 = 0-12 Hours
         -- 5 = 2-3 Days
         -- 6 = 1-2 Weeks
-        Reanimate = 4,
+        Reanimate = 3,
         -- Zombie intelligence. Default = Basic Navigation
         -- 1 = Navigate and Use Doors
         -- 2 = Navigate
@@ -834,7 +834,7 @@ SandboxVars = {
         -- 4 = Random
         Cognition = 4,
         -- Min: 0 Max: 100 Default: 0
-        DoorOpeningPercentage = 0,
+        DoorOpeningPercentage = 1.0,
         -- How often zombies can crawl under parked vehicles. Default = Often
         -- 1 = Crawlers Only
         -- 2 = Extremely Rare
@@ -851,7 +851,7 @@ SandboxVars = {
         -- 4 = None
         -- 5 = Random
         -- 6 = Random between Normal and None
-        Memory = 6,
+        Memory = 5,
         -- Zombie vision radius. Default = Random between Normal and Poor
         -- 1 = Eagle
         -- 2 = Normal
@@ -882,7 +882,7 @@ SandboxVars = {
         -- If multiple attacking zombies can drag you down and kill you.  Dependent on zombie strength.
         ZombiesDragDown = true,
         -- If crawler zombies beside a player contribute to the chance of being dragged down and killed by a group of zombies.
-        ZombiesCrawlersDragDown = false,
+        ZombiesCrawlersDragDown = true,
         -- If zombies have a chance to lunge at you after climbing over a fence or through a window if you're too close.
         ZombiesFenceLunge = true,
         -- Serves as a multiplier when determining the effectiveness of armor worn by zombies. Min: 0.00 Max: 100.00 Default: 2.00
@@ -907,13 +907,13 @@ SandboxVars = {
         -- How many zombies it takes to damage a tall fence. Min: -1 Max: 100 Default: 25
         FenceThumpersRequired = 25,
         -- How quickly zombies damage tall fences. Min: 0.01 Max: 100.00 Default: 1.00
-        FenceDamageMultiplier = 1.0,
+        FenceDamageMultiplier = 0.5,
     },
     ZombieConfig = {
         -- Set by the "Zombie Count" population option, or by a custom number here. Insane = 2.5, Very High = 1.6, High = 1.2, Normal = 0.65, Low = 0.15, None = 0.0. Min: 0.00 Max: 4.00 Default: 0.65
-        PopulationMultiplier = 0.65,
+        PopulationMultiplier = 1.65,
         -- A multiplier for the desired zombie population at the start of the game. Insane = 3.0, Very High = 2.0, High = 1.5, Normal = 1.0, Low = 0.5, None = 0.0. Min: 0.00 Max: 4.00 Default: 1.00
-        PopulationStartMultiplier = 0.5,
+        PopulationStartMultiplier = 0.8,
         -- A multiplier for the desired zombie population on the peak day. Insane = 3.0, Very High = 2.0, High = 1.5, Normal = 1.0, Low = 0.5, None = 0.0. Min: 0.00 Max: 4.00 Default: 1.50
         PopulationPeakMultiplier = 3.0,
         -- The day when the population reaches its peak. Min: 1 Max: 365 Default: 28
@@ -927,7 +927,7 @@ SandboxVars = {
         -- The number of hours that must pass before zombies migrate  to empty parts of the same cell. If 0, migration is disabled. Min: 0.00 Max: 8760.00 Default: 12.00
         RedistributeHours = 24.0,
         -- The distance a zombie will try to walk towards the last sound it heard. Min: 10 Max: 1000 Default: 100
-        FollowSoundDistance = 100,
+        FollowSoundDistance = 300,
         -- The size of groups real zombies form when idle. 0 means zombies don't form groups. Groups don't form inside buildings or forest zones. Min: 0 Max: 1000 Default: 20
         RallyGroupSize = 100,
         -- The amount, as a percentage, that zombie groups can vary in size from the default (both larger and smaller).   For example, at 50%% variance with a default group size of 20, groups will vary in size from 10-30. Min: 0 Max: 100 Default: 50
@@ -945,7 +945,7 @@ SandboxVars = {
         -- The rate at which all skills level up. Min: 0.00 Max: 1000.00 Default: 1.00
         Global = 3.5,
         -- When enabled, all skills will use the Global Multiplier.
-        GlobalToggle = false,
+        GlobalToggle = true,
         -- Rate at which Fitness skill levels up. Min: 0.00 Max: 1000.00 Default: 1.00
         Fitness = 1.2,
         -- Rate at which Strength skill levels up. Min: 0.00 Max: 1000.00 Default: 1.00
@@ -1136,6 +1136,7 @@ SandboxVars = {
         EnableRepairAllClothing = true,
         EnableEquipmentQoL = true,
         EnableToolSet = true,
+        EnableMaterialBundles = true,
         EnableFieldFilters = true,
         -- Min: 1 Max: 50 Default: 1
         FilterLifespanMultiplier = 1,
@@ -1176,6 +1177,10 @@ SandboxVars = {
         ConeVisionOutlineAlpha = 35,
         EnableBack2Slot = true,
         EnableWeaponHudOverlay = true,
+        EnableMaskHud = true,
+        EnableStatusBar = true,
+        EnableEquipmentPanel = true,
+        EnableBarrelCapFix = true,
         EnableAimingAmmoCursor = true,
         EnableAimingHealthCursor = true,
         EnableAimingDensityCursor = false,
@@ -1208,6 +1213,9 @@ SandboxVars = {
         EnableVehicleHVAC = true,
         EnableVehicleRadio = true,
         EnableDashboardHighlights = true,
+        EnableEatWhileDriving = true,
+        -- Min: 0 Max: 120 Default: 60
+        EatWhileDrivingMaxSpeed = 60,
         EnableTowAssist = true,
         -- Min: 0.00 Max: 15.00 Default: 5.00
         TowAssistStandardFactor = 5.0,
@@ -1259,6 +1267,7 @@ SandboxVars = {
         EnableTVRadial = true,
         EnableReplaceVanillaSafehouseUI = true,
         EnableVehicleClaimEnforcementStrict = true,
+        EnableRVExitRescue = true,
         EnableAnimatedDuffles = true,
         EnablePlayerMapTracking = true,
         -- Min: 1 Max: 3 Default: 1
@@ -1335,7 +1344,14 @@ SandboxVars = {
         SkillJournalDeathPenalty = 1,
         SkillJournalAdminOnlyRecover = false,
         EnableReloadAllMags = true,
+        EnableFridgeToggle = true,
         EnableSeatedReloadBonus = true,
+        EnableGroundMarking = true,
+        EnableBinksScooper = true,
+        -- Min: 1 Max: 6 Default: 3
+        BinksScooperRadius = 3,
+        -- Min: 10 Max: 60 Default: 30
+        BinksScooperMaxPerAction = 30,
     },
     UniversalGunRepair = {
         ContextCompatibility = 1,

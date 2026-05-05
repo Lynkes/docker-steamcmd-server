@@ -4,16 +4,16 @@ Runs a Project Zomboid dedicated server via SteamCMD. On first start the bundled
 
 **Update:** Restart the container to update to the latest game version. Set `VALIDATE=true` to force a full file validation.
 
-## Java Runtime & JVM Optimization
+## Java Runtime
 
-The image ships **GraalVM Community Edition 25.0.2** (64-bit), installed at `/opt/graalvm` via a multi-stage Docker build. The Graal JIT compiler is enabled through JVMCI flags. The game's own bundled JRE is replaced at runtime with a symlink to `/opt/graalvm`.
+The server uses the JRE bundled with Project Zomboid (shipped by the game itself via SteamCMD). No custom JVM is installed in the image.
 
 JVM tuning is controlled by the JSON files next to the launchers:
 
-| File | Launcher | GC | JIT |
-| --- | --- | --- | --- |
-| `ProjectZomboid64.json` | `ProjectZomboid64` | G1GC | GraalVM community (JVMCI) |
-| `ProjectZomboid32.json` | `ProjectZomboid32` | G1GC | default |
+| File | Launcher | GC |
+| --- | --- | --- |
+| `ProjectZomboid64.json` | `ProjectZomboid64` | G1GC |
+| `ProjectZomboid32.json` | `ProjectZomboid32` | G1GC |
 
 ### Heap
 
@@ -36,12 +36,10 @@ JVM tuning is controlled by the JSON files next to the launchers:
 | `DisableExplicitGC` | — | Prevents `System.gc()` calls from forcing a Full GC |
 | `UseStringDeduplication` | — | Deduplicates identical `String` objects in the heap — useful for a game that loads many repeated strings from map/mod data |
 
-### GraalVM JIT (JVMCI)
+### GC Flags (both launchers)
 
 | Flag | Intent |
 | --- | --- |
-| `EnableJVMCI` + `UseJVMCICompiler` | Replaces the default C2 JIT with the Graal compiler for higher peak throughput |
-| `CompilerConfiguration=community` | Uses the full community Graal tier (most aggressive optimizations) |
 | `ReservedCodeCacheSize=1024m` | Gives the JIT compiler 1 GB of code cache so hot paths are never evicted |
 
 ## Server Configuration
@@ -85,7 +83,8 @@ docker run --name ProjectZomboid -d \
     --env 'PGID=568' \
     --volume /path/to/steamcmd:/serverdata/steamcmd \
     --volume /path/to/projectzomboid:/serverdata/serverfiles \
-    ich777/steamcmd:projectzomboid
+    ghcr.io/lynkes/docker-steamcmd-server:projectzomboid
+    
 ```
 
 ## TrueNAS / Docker Compose

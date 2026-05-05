@@ -1,8 +1,4 @@
-FROM ghcr.io/graalvm/graalvm-community:25.0.2 AS graalvm
-RUN cp -r $JAVA_HOME /graalvm-export
 FROM debian:trixie-slim
-
-ARG GRAALVM_VERSION="25.0.2"
 
 RUN dpkg --add-architecture i386 \
  && apt-get update \
@@ -12,21 +8,12 @@ RUN dpkg --add-architecture i386 \
         locales \
         screen \
         wget \
- && locale-gen en_US.UTF-8 \
- && rm -rf /var/lib/apt/lists/*
-
-ENV LANG=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-COPY --from=graalvm /graalvm-export /opt/graalvm
-
 #Set environment variables
-ENV JAVA_HOME="/opt/graalvm"
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV STEAMCMD_DIR="/serverdata/steamcmd"
 ENV SERVER_DIR="/serverdata/serverfiles"
 #ENV GAME_ID="380870 -beta unstable" #B42.17+ use  "380870 -beta unstable"
-ENV GAME_ID="380870"
 #ENV GAME_ID="380870" Use this for stable branch
+ENV GAME_ID="380870"
 ENV GAME_PARAMS=""
 ENV GAME_PARAMS_EXTRA=""
 ENV ADMIN_PWD="adminDocker"

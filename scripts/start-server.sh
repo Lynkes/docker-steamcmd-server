@@ -53,14 +53,6 @@ fi
 
 export LD_LIBRARY_PATH="${SERVER_DIR}/linux64:${SERVER_DIR}/natives:${SERVER_DIR}:${LD_LIBRARY_PATH}"
 
-if [ -d "${SERVER_DIR}/jre64" ] && [ ! -L "${SERVER_DIR}/jre64" ]; then
-	mv "${SERVER_DIR}/jre64" "${SERVER_DIR}/jre64.bak"
-fi
-if [ ! -L "${SERVER_DIR}/jre64" ]; then
-	ln -s "${JAVA_HOME}" "${SERVER_DIR}/jre64" \
-		|| echo "[ERROR] Failed to symlink GraalVM JRE"
-fi
-
 cp /opt/scripts/ProjectZomboid64.json ${SERVER_DIR}/ProjectZomboid64.json \
     || { echo "[ERROR] Failed to copy ProjectZomboid64.json"; exit 1; }
 cp /opt/scripts/ProjectZomboid32.json ${SERVER_DIR}/ProjectZomboid32.json \
