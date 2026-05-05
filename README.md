@@ -42,7 +42,6 @@ JVM tuning is controlled by the JSON files next to the launchers:
 | --- | --- |
 | `EnableJVMCI` + `UseJVMCICompiler` | Replaces the default C2 JIT with the Graal compiler for higher peak throughput |
 | `CompilerConfiguration=community` | Uses the full community Graal tier (most aggressive optimizations) |
-| `TuneInlinerExploration=1` | Makes Graal more aggressive at inlining hot methods — improves steady-state throughput |
 | `ReservedCodeCacheSize=1024m` | Gives the JIT compiler 1 GB of code cache so hot paths are never evicted |
 
 ## Server Configuration
