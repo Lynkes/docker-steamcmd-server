@@ -30,7 +30,6 @@
 		"-XX:+EnableJVMCI",
 		"-XX:+UseJVMCICompiler",
 		"-Djdk.graal.CompilerConfiguration=community",
-		"-Djdk.graal.TuneInlinerExploration=1",
 		"--enable-native-access=ALL-UNNAMED"
 	]
 }
