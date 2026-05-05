@@ -1,0 +1,29 @@
+services:
+  projectzomboid:
+    environment:
+      ADMIN_PWD: ChangeMe
+      DATA_PERM: '770'
+      GAME_ID: 380870 -beta unstable #B42.17+ use  "380870 -beta unstable"
+      PGID: '568'
+      PUID: '568'
+      VALIDATE: ''
+    image: ghcr.io/lynkes/docker-steamcmd-server:projectzomboid
+    network_mode: host
+    pull_policy: always
+    restart: always
+    volumes:
+      - bind:
+          create_host_path: True
+          propagation: rprivate
+        read_only: False
+        source: /mnt/vdev/apps/projectzomboid
+        target: /serverdata/serverfiles
+        type: bind
+      - bind:
+          create_host_path: True
+          propagation: rprivate
+        read_only: False
+        source: /mnt/vdev/apps/steamcmd
+        target: /serverdata/steamcmd
+        type: bind
+volumes: {}

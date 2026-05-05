@@ -13,7 +13,6 @@
 		"-Djava.library.path=linux32/:natives/",
 		"-Djava.security.egd=file:/dev/urandom",
 		"-XX:+UseG1GC",
-		"-XX:+AlwaysPreTouch",
 		"-XX:+DisableExplicitGC",
 		"-XX:+UseStringDeduplication",
 		"-XX:ReservedCodeCacheSize=128m",

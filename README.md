@@ -63,15 +63,15 @@ Configuration files included:
 | --- | --- | --- |
 | `STEAMCMD_DIR` | SteamCMD installation directory | `/serverdata/steamcmd` |
 | `SERVER_DIR` | Game files directory | `/serverdata/serverfiles` |
-| `GAME_ID` | Steam App ID (use `380870 -beta BRANCH` for a specific branch) | `380870` |
+| `GAME_ID` | Steam App ID — use `380870 -beta unstable` for B42.17+ | `380870` |
 | `ADMIN_PWD` | In-game admin password | `adminDocker` |
 | `GAME_PARAMS` | Extra arguments passed to the server launcher | _(empty)_ |
 | `VALIDATE` | Set to `true` to validate game files on every start | _(empty)_ |
 | `USERNAME` | Steam username (leave blank for anonymous login) | _(empty)_ |
 | `PASSWRD` | Steam password (leave blank for anonymous login) | _(empty)_ |
-| `PUID` | User ID the server process runs as | `1000` |
-| `PGID` | Group ID the server process runs as | `1000` |
-| `UMASK` | File creation mask | `000` |
+| `PUID` | User ID the server process runs as | `568` |
+| `PGID` | Group ID the server process runs as | `568` |
+| `UMASK` | File creation mask | `022` |
 | `DATA_PERM` | Permissions applied to the data directory | `770` |
 
 ## Run Example
@@ -82,12 +82,16 @@ docker run --name ProjectZomboid -d \
     -p 27015:27015/tcp \
     --env 'GAME_ID=380870' \
     --env 'ADMIN_PWD=changeme' \
-    --env 'PUID=1000' \
-    --env 'PGID=1000' \
+    --env 'PUID=568' \
+    --env 'PGID=568' \
     --volume /path/to/steamcmd:/serverdata/steamcmd \
     --volume /path/to/projectzomboid:/serverdata/serverfiles \
     ich777/steamcmd:projectzomboid
 ```
+
+## TrueNAS / Docker Compose
+
+A ready-to-use `truenas.yaml` is included at the root of the repository. It configures the container for TrueNAS Scale (or any Docker Compose environment) with `network_mode: host`, bind mounts under `/mnt/vdev/apps/`, and the built-in `apps` user (`PUID`/`PGID=568`).
 
 ## Volumes
 

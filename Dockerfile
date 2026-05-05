@@ -1,7 +1,9 @@
 FROM ghcr.io/graalvm/graalvm-community:25.0.2 AS graalvm
 RUN cp -r $JAVA_HOME /graalvm-export
 FROM debian:trixie-slim
+
 ARG GRAALVM_VERSION="25.0.2"
+
 RUN dpkg --add-architecture i386 \
  && apt-get update \
  && apt-get install -y --no-install-recommends \
@@ -11,23 +13,28 @@ RUN dpkg --add-architecture i386 \
         wget \
  && rm -rf /var/lib/apt/lists/*
 COPY --from=graalvm /graalvm-export /opt/graalvm
+
+#Set environment variables
 ENV JAVA_HOME="/opt/graalvm"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV STEAMCMD_DIR="/serverdata/steamcmd"
 ENV SERVER_DIR="/serverdata/serverfiles"
-ENV GAME_ID=""
+#ENV GAME_ID="380870 -beta unstable" #B42.17+ use  "380870 -beta unstable"
+ENV GAME_ID="380870"
+#ENV GAME_ID="380870" Use this for stable branch
 ENV GAME_PARAMS=""
 ENV GAME_PARAMS_EXTRA=""
 ENV ADMIN_PWD="adminDocker"
 ENV GAME_PORT=16261
 ENV VALIDATE=""
 ENV UMASK=022
-ENV PUID=1000
-ENV PGID=1000
+ENV PUID=568
+ENV PGID=568
 ENV USERNAME=""
 ENV PASSWRD=""
 ENV USER="steam"
 ENV DATA_PERM=770
+
 RUN useradd -m -s /bin/bash steam \
  && mkdir -p "${STEAMCMD_DIR}" "${SERVER_DIR}" \
  && wget -qO /tmp/steamcmd.tar.gz \
@@ -38,5 +45,6 @@ RUN useradd -m -s /bin/bash steam \
 ADD /scripts/ /opt/scripts/
 RUN chmod -R 770 /opt/scripts/
 ADD /config/ /opt/config/
+
 #Server Start
 ENTRYPOINT ["/opt/scripts/start.sh"]
