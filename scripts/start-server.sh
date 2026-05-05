@@ -1,4 +1,9 @@
 #!/bin/bash
+mkdir -p ${SERVER_DIR}/logs/steam
+mkdir -p /home/steam/Steam
+rm -rf /home/steam/Steam/logs
+ln -sfn ${SERVER_DIR}/logs/steam /home/steam/Steam/logs
+
 if [ ! -f ${STEAMCMD_DIR}/steamcmd.sh ]; then
     echo "[ERROR] SteamCMD not found, downloading..."
     wget -q -O /tmp/steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \

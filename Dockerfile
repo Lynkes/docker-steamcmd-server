@@ -9,9 +9,14 @@ RUN dpkg --add-architecture i386 \
  && apt-get install -y --no-install-recommends \
         ca-certificates \
         lib32gcc-s1 \
+        locales \
         screen \
         wget \
+ && locale-gen en_US.UTF-8 \
  && rm -rf /var/lib/apt/lists/*
+
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 COPY --from=graalvm /graalvm-export /opt/graalvm
 
 #Set environment variables
