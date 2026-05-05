@@ -5,9 +5,10 @@ RUN dpkg --add-architecture i386 \
  && apt-get install -y --no-install-recommends \
         ca-certificates \
         lib32gcc-s1 \
-        locales \
         screen \
         wget \
+ && rm -rf /var/lib/apt/lists/*
+
 #Set environment variables
 ENV STEAMCMD_DIR="/serverdata/steamcmd"
 ENV SERVER_DIR="/serverdata/serverfiles"
